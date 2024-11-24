@@ -1,4 +1,6 @@
-﻿using System;
+﻿// WebSocketServer/Program.cs
+using System;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
@@ -7,16 +9,20 @@ using System.Threading.Tasks;
 
 public class Program
 {
+    private static readonly ConcurrentBag<WebSocket> Clients = new ConcurrentBag<WebSocket>();
+
     public static async Task Main()
     {
-        string host = "localhost";
-        int port = 8080;
+        string host = "localhost"; // Адрес сервера
+        int port = 8080;           // Порт сервера
 
-        //Запуск сервера
         HttpListener listener = new HttpListener();
         listener.Prefixes.Add($"http://{host}:{port}/");
         listener.Start();
         Console.WriteLine($"WebSocket server started at ws://{host}:{port}/");
+
+        // Запускаем обработку пользовательского ввода сообщений
+        _ = Task.Run(() => HandleServerMessages());
 
         while (true)
         {
@@ -27,7 +33,8 @@ public class Program
                 {
                     HttpListenerWebSocketContext webSocketContext = await context.AcceptWebSocketAsync(null);
                     Console.WriteLine("Client connected.");
-                    _ = Task.Run(() => HandleServerConnection(webSocketContext.WebSocket));
+                    Clients.Add(webSocketContext.WebSocket);
+                    _ = Task.Run(() => MonitorClient(webSocketContext.WebSocket));
                 }
                 else
                 {
@@ -42,36 +49,66 @@ public class Program
         }
     }
 
-    private static async Task HandleServerConnection(WebSocket webSocket)
+    private static async Task MonitorClient(WebSocket webSocket)
     {
-        while (true)
+        try
         {
-            Console.Write("Enter a message to send: ");
-            string message = Console.ReadLine();
-            if (string.IsNullOrEmpty(message)) continue;
+            byte[] buffer = new byte[1024];
+            while (webSocket.State == WebSocketState.Open)
+            {
+                // Пустой цикл для поддержания соединения клиента
+                await Task.Delay(100);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Client monitoring error: {ex.Message}");
+        }
+        finally
+        {
+            RemoveClient(webSocket);
+            Console.WriteLine("Client disconnected.");
+        }
+    }
 
-            if (webSocket.State == WebSocketState.Open)
+    private static void RemoveClient(WebSocket webSocket)
+    {
+        Clients.TryTake(out _);
+        webSocket.Dispose();
+    }
+
+    private static async Task BroadcastMessage(string message)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes(message);
+        foreach (var client in Clients)
+        {
+            if (client.State == WebSocketState.Open)
             {
                 try
                 {
-                    byte[] buffer = Encoding.UTF8.GetBytes(message);
-                    await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                    Console.WriteLine("Message sent successfully.");
+                    await client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to send message: {ex.Message}");
+                    Console.WriteLine($"Failed to send message to a client: {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine("Client is not connected. Waiting for a new client connection...");
-                break;
+                RemoveClient(client);
             }
         }
+    }
 
-        Console.WriteLine("Client disconnected.");
-        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-        webSocket.Dispose();
+    private static async Task HandleServerMessages()
+    {
+        while (true)
+        {
+            Console.Write("Enter a message to send to all clients: ");
+            string message = Console.ReadLine();
+            if (string.IsNullOrEmpty(message)) continue;
+
+            await BroadcastMessage(message);
+        }
     }
 }
