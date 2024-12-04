@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocketClient", "WebSocke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{DABDAC20-EE3A-4F97-A654-5A501465AB8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer.DAL", "WebSocketServer.DAL\WebSocketServer.DAL.csproj", "{26306C55-0D8F-43CA-860A-DBA0C677DC3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer.BLL", "WebSocketServer.BLL\WebSocketServer.BLL.csproj", "{164713AF-C3DD-4962-A085-04ABFAD6F4E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer.Tests", "WebSocketServer.Tests\WebSocketServer.Tests.csproj", "{20EE55D7-DCD0-401A-A6A8-C758D02D80AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{DABDAC20-EE3A-4F97-A654-5A501465AB8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DABDAC20-EE3A-4F97-A654-5A501465AB8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DABDAC20-EE3A-4F97-A654-5A501465AB8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26306C55-0D8F-43CA-860A-DBA0C677DC3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26306C55-0D8F-43CA-860A-DBA0C677DC3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26306C55-0D8F-43CA-860A-DBA0C677DC3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26306C55-0D8F-43CA-860A-DBA0C677DC3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{164713AF-C3DD-4962-A085-04ABFAD6F4E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{164713AF-C3DD-4962-A085-04ABFAD6F4E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{164713AF-C3DD-4962-A085-04ABFAD6F4E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{164713AF-C3DD-4962-A085-04ABFAD6F4E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20EE55D7-DCD0-401A-A6A8-C758D02D80AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20EE55D7-DCD0-401A-A6A8-C758D02D80AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20EE55D7-DCD0-401A-A6A8-C758D02D80AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20EE55D7-DCD0-401A-A6A8-C758D02D80AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
